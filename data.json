@@ -1,0 +1,27 @@
+[
+   { "id": 1556,
+    "childs": {
+      "wentwell": [
+        {"text": "The presentation was clear.", "vote": 5},
+        {"text": "Good audience engagement.", "vote": 4},
+        {"text": "Concise and to the point.", "vote": 5}
+      ],
+      "didntwentwell": [
+        {"text": "Some technical glitches.", "vote": 2},
+        {"text": "Lack of visual aids.", "vote": 3},
+        {"text": "Difficulty understanding the speaker.", "vote": 2}
+      ],
+      "improve": [
+        {"text": "Include more visuals.", "vote": 4},
+        {"text": "Explain technical terms better.", "vote": 3},
+        {"text": "Improve audio quality.", "vote": 3}
+      ],
+      "stop": [
+        {"text": "Stop using jargon.", "vote": 4},
+        {"text": "Stop going off-topic.", "vote": 2},
+        {"text": "Stop rushing through the content.", "vote": 3}
+      ]
+    }
+}
+]
+  

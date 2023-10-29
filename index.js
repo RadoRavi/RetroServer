@@ -85,11 +85,12 @@ wss.broadcast = function (id, message, data) {
     } else if (messageData.message === "join_group") {
       console.log("reached here")
       const { id, pin } = messageData
+      console.log("pin")
       const groupDAET = await Group.find({ groupId: id })
-      console.log(groupDAET)
+      console.log("groupDAET",groupDAET)
       groupDAET.forEach(data => {
-        console.log(data)
-        if (data.pin === pin) {
+        console.log("data",data)
+        if (data.pin == pin) {
           console.log("hi")
           ws.id = data.groupId
           const resJoin = {
@@ -142,6 +143,10 @@ wss.broadcast = function (id, message, data) {
     }
     else if (messageData.message === "run") {
       wss.broadcast(ws.id, "run", JSON.stringify({"message":messageData.message,"time":messageData.time}));
+
+    }
+    else if (messageData.message === "rerun") {
+      wss.broadcast(ws.id, "rerun", JSON.stringify({"message":messageData.message,"time":messageData.time}));
 
     } else if (messageData.message === "update") {
       try {

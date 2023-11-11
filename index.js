@@ -85,11 +85,11 @@ wss.broadcast = function (id, message, data) {
     } else if (messageData.message === "join_group") {
       console.log("reached here")
       const { id, pin } = messageData
-      console.log("pin")
-      const groupDAET = await Group.find({ groupId: id })
+      console.log("id",data.pin == pin)
+      const groupDAET = await Group.find({groupId:id})
       console.log("groupDAET",groupDAET)
       groupDAET.forEach(data => {
-        console.log("data",data)
+       
         if (data.pin == pin) {
           console.log("hi")
           ws.id = data.groupId
@@ -99,6 +99,8 @@ wss.broadcast = function (id, message, data) {
           }
           ws.send(JSON.stringify(resJoin))
           return
+        }else{
+         
         }
 
       })
@@ -108,12 +110,14 @@ wss.broadcast = function (id, message, data) {
 
     }
     else if (messageData.message === "hi") {
-      const groupList = await Group.find({ groupId: ws.id })
+      const groupList = await Group.find({ groupId: ws.id})
+      console.log(groupList)
       const group = groupList[0]
       const section = messageData.id
       // console.log("section",section)
       // console.log("broadcast",group)
       var sec = group[section]
+      console.log("section",section)
       sec.push({ "text": messageData.typo, "vote": 0, "id": messageData.randomKey })
       const updateRes = await group.save()
       const allFeedback = await Group.find({ groupId: ws.id })
@@ -152,30 +156,50 @@ wss.broadcast = function (id, message, data) {
       try {
         const list = await Group.find({groupId:ws.id})
         const item = list[0]
-        const sectionUpdate = messageData.id;
+        const sectionName = messageData.id;
         const commentId = messageData.id2;
-        item[sectionUpdate]=item[sectionUpdate].map(ele=>{
-          if(ele.id==commentId){
-            ele.text=messageData.typo
-          }
-          return ele
-        })
+        const updatedList=item[sectionName].map(ele=>{
+             if(ele.id==commentId){
+               ele.text=messageData.typo
+             }
+             return ele
+           })
+           console.log("typo",commentId)
+           console.log("updatedList",updatedList)
+           const updateQuery = {
+            [sectionName]: updatedList
+          };
+           const updateRes = await Group.findOneAndUpdate({groupId:ws.id},updateQuery)
+          const allFeedbacksAfterUpdate = await Group.find({ groupId: ws.id });
+      console.log("Full mongo:", allFeedbacksAfterUpdate);
+      wss.broadcast(ws.id, "hi", JSON.stringify(allFeedbacksAfterUpdate));
+        // wss.broadcast(ws.id, "hi", JSON.stringify([allFeedbacksAfterUpdate]));
+        // const list = await Group.find({groupId:ws.id})
+        // const item = list[0]
+        // const sectionUpdate = messageData.id;
+        // const commentId = messageData.id2;
+        // item[sectionUpdate]=item[sectionUpdate].map(ele=>{
+        //   if(ele.id==commentId){
+        //     ele.text=messageData.typo
+        //   }
+        //   return ele
+        // })
         
-        const options = {
-          new: true
-        };
+        // const options = {
+        //   new: true
+        // };
     
-        const updatedDocument = await item.save({ new: true });
-        if (updatedDocument) {
-          console.log("Updated document:", updatedDocument);
-        } else {
-          console.log("Document not found or not updated.");
-        }
+        // const updatedDocument = await item.save({ new: true });
+        // if (updatedDocument) {
+        //   console.log("Updated document:", updatedDocument);
+        // } else {
+        //   console.log("Document not found or not updated.");
+        // }
     
-        const allFeedbacksAfterUpdate = await Group.find({ groupId: ws.id });
-        console.log("Full mongo:", allFeedbacksAfterUpdate);
+        // const allFeedbacksAfterUpdate = await Group.find({ groupId: ws.id });
+        // console.log("Full mongo:", allFeedbacksAfterUpdate);
     
-        wss.broadcast(ws.id, "hi", JSON.stringify([allFeedbacksAfterUpdate]));
+        // wss.broadcast(ws.id, "hi", JSON.stringify([allFeedbacksAfterUpdate]));
       } catch (error) {
         console.error("Error:", error);
       }
